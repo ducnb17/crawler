@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crawler Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            },
+          },
+        },
+      },
+    };
+  </script>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-accent-600 flex items-center justify-center text-white font-bold">
+          C
+        </div>
+        <div>
+          <h1 class="text-lg font-semibold text-gray-900 leading-tight">Crawler Dashboard</h1>
+          <p class="text-xs text-gray-500 leading-tight">Theo dõi và quản lý dữ liệu crawl</p>
+        </div>
+      </div>
+      <button
+        id="start-crawl-btn"
+        class="inline-flex items-center gap-2 bg-accent-600 hover:bg-accent-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <svg id="start-crawl-btn-icon" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+        </svg>
+        <svg id="start-crawl-btn-spinner" class="hidden w-4 h-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        <span id="start-crawl-btn-label">Start Crawl</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Error banner -->
+  <div id="error-banner" class="hidden max-w-7xl mx-auto px-6 pt-4">
+    <div class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 flex items-center justify-between">
+      <span id="error-banner-text">Không thể kết nối tới backend.</span>
+      <button id="error-banner-close" class="text-red-500 hover:text-red-700 font-medium">&times;</button>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-6 py-8">
+
+    <!-- Cấu hình Crawl -->
+    <section class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 mb-8">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-sm font-semibold text-gray-900">Cấu hình Crawl</h2>
+        <p id="config-disabled-notice" class="hidden text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-full px-3 py-1">
+          Đang crawl, không thể đổi cấu hình
+        </p>
+      </div>
+      <form id="config-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+          <label for="config-start-url" class="block text-xs font-medium text-gray-500 mb-1">Start URL</label>
+          <input id="config-start-url" type="text" placeholder="https://example.com/" required
+            class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500" />
+        </div>
+        <div>
+          <label for="config-allowed-domain" class="block text-xs font-medium text-gray-500 mb-1">Allowed Domain</label>
+          <input id="config-allowed-domain" type="text" placeholder="example.com" required
+            class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500" />
+        </div>
+        <div>
+          <label for="config-content-selector" class="block text-xs font-medium text-gray-500 mb-1">Content Selector (CSS)</label>
+          <input id="config-content-selector" type="text" placeholder=".product_pod" required
+            class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500" />
+        </div>
+        <div>
+          <label for="config-max-pages" class="block text-xs font-medium text-gray-500 mb-1">Max Pages</label>
+          <input id="config-max-pages" type="number" min="1" placeholder="50" required
+            class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500" />
+        </div>
+        <div class="sm:col-span-2 lg:col-span-4 flex items-center gap-3">
+          <button id="save-config-btn" type="submit"
+            class="inline-flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            Lưu cấu hình
+          </button>
+          <span id="config-save-message" class="hidden text-sm text-green-600">Đã lưu cấu hình.</span>
+        </div>
+      </form>
+    </section>
+
+    <!-- Stats cards -->
+
+    <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+        <p class="text-sm text-gray-500 mb-1">Tổng số item</p>
+        <p id="stat-total-items" class="text-2xl font-semibold text-gray-900">—</p>
+      </div>
+      <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+        <p class="text-sm text-gray-500 mb-1">Trạng thái crawl</p>
+        <p class="text-2xl font-semibold text-gray-900 flex items-center gap-2">
+          <span id="stat-status-dot" class="w-2.5 h-2.5 rounded-full bg-gray-400"></span>
+          <span id="stat-status-text">Không rõ</span>
+        </p>
+      </div>
+      <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+        <p class="text-sm text-gray-500 mb-1">Lần crawl gần nhất</p>
+        <p id="stat-last-crawled" class="text-2xl font-semibold text-gray-900">—</p>
+      </div>
+    </section>
+
+    <!-- Search box -->
+    <section class="mb-4 flex items-center justify-between gap-4">
+      <div class="relative w-full max-w-md">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+        </svg>
+        <input
+          id="search-input"
+          type="text"
+          placeholder="Tìm kiếm theo Title..."
+          class="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
+        />
+      </div>
+      <p class="text-sm text-gray-500 whitespace-nowrap">
+        Hiển thị <span id="showing-count" class="font-medium text-gray-700">0</span> /
+        <span id="total-count" class="font-medium text-gray-700">0</span> item
+      </p>
+    </section>
+
+    <!-- Data table -->
+    <section class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-gray-50 border-b border-gray-200 text-left text-gray-500 uppercase text-xs tracking-wide">
+              <th class="px-5 py-3 font-medium">URL</th>
+              <th class="px-5 py-3 font-medium">Title</th>
+              <th class="px-5 py-3 font-medium">Price</th>
+              <th class="px-5 py-3 font-medium">Availability</th>
+              <th class="px-5 py-3 font-medium">Crawled At</th>
+            </tr>
+          </thead>
+          <tbody id="table-body" class="divide-y divide-gray-100">
+            <tr>
+              <td colspan="5" class="px-5 py-8 text-center text-gray-400">Đang tải...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-between px-5 py-4 border-t border-gray-200 bg-gray-50">
+        <p class="text-sm text-gray-500">
+          Trang <span id="page-current" class="font-medium text-gray-700">1</span> /
+          <span id="page-total" class="font-medium text-gray-700">1</span>
+        </p>
+        <div class="flex items-center gap-1">
+          <button
+            id="prev-page-btn"
+            class="px-3 py-1.5 text-sm border border-gray-200 rounded-lg text-gray-600 bg-white hover:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed disabled:hover:bg-white"
+          >
+            Trước
+          </button>
+          <button
+            id="next-page-btn"
+            class="px-3 py-1.5 text-sm border border-gray-200 rounded-lg text-gray-600 bg-white hover:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed disabled:hover:bg-white"
+          >
+            Sau
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // ===== Cấu hình =====
+    // Frontend được FastAPI phục vụ chung 1 server với API (app.py serve_frontend
+    // tại '/'), nên mặc định dùng cùng origin đang mở dashboard (window.location.origin).
+    // Điều này giúp dashboard hoạt động đúng ở cả localhost và khi deploy lên VPS
+    // (truy cập bằng http://<IP_VPS>:8001) mà không cần sửa code.
+    // Nếu mở file:// trực tiếp (origin rỗng), fallback về localhost:8001 cho dev.
+    const API_BASE_URL = window.location.origin.startsWith('http')
+      ? window.location.origin
+      : 'http://localhost:8001';
+
+
+
+    const PAGE_SIZE = 20;
+    const CRAWL_POLL_INTERVAL_MS = 2000;
+
+    // ===== State =====
+    let currentPage = 1;
+    let currentSearch = '';
+    let crawlPollTimerId = null;
+    let searchDebounceTimerId = null;
+
+    // ===== DOM refs =====
+    const startCrawlBtn = document.getElementById('start-crawl-btn');
+    const startCrawlBtnLabel = document.getElementById('start-crawl-btn-label');
+    const startCrawlBtnIcon = document.getElementById('start-crawl-btn-icon');
+    const startCrawlBtnSpinner = document.getElementById('start-crawl-btn-spinner');
+
+    const errorBanner = document.getElementById('error-banner');
+    const errorBannerText = document.getElementById('error-banner-text');
+    const errorBannerClose = document.getElementById('error-banner-close');
+
+    const statTotalItems = document.getElementById('stat-total-items');
+    const statStatusDot = document.getElementById('stat-status-dot');
+    const statStatusText = document.getElementById('stat-status-text');
+    const statLastCrawled = document.getElementById('stat-last-crawled');
+
+    const searchInput = document.getElementById('search-input');
+    const showingCount = document.getElementById('showing-count');
+    const totalCount = document.getElementById('total-count');
+
+    const tableBody = document.getElementById('table-body');
+    const pageCurrentEl = document.getElementById('page-current');
+    const pageTotalEl = document.getElementById('page-total');
+    const prevPageBtn = document.getElementById('prev-page-btn');
+    const nextPageBtn = document.getElementById('next-page-btn');
+
+    const configForm = document.getElementById('config-form');
+    const configStartUrlInput = document.getElementById('config-start-url');
+    const configAllowedDomainInput = document.getElementById('config-allowed-domain');
+    const configContentSelectorInput = document.getElementById('config-content-selector');
+    const configMaxPagesInput = document.getElementById('config-max-pages');
+    const saveConfigBtn = document.getElementById('save-config-btn');
+    const configSaveMessage = document.getElementById('config-save-message');
+    const configDisabledNotice = document.getElementById('config-disabled-notice');
+    const configFormInputs = [
+      configStartUrlInput,
+      configAllowedDomainInput,
+      configContentSelectorInput,
+      configMaxPagesInput,
+    ];
+
+
+    // ===== Helpers =====
+
+    function showError(message) {
+      errorBannerText.textContent = message;
+      errorBanner.classList.remove('hidden');
+    }
+
+    function hideError() {
+      errorBanner.classList.add('hidden');
+    }
+
+    errorBannerClose.addEventListener('click', hideError);
+
+    async function fetchJson(path, options) {
+      let response;
+      try {
+        response = await fetch(`${API_BASE_URL}${path}`, options);
+      } catch (err) {
+        throw new Error('Không thể kết nối tới backend. Hãy chắc chắn server đang chạy.');
+
+      }
+      if (!response.ok) {
+        let detail = '';
+        try {
+          const body = await response.json();
+          detail = body.detail || '';
+        } catch (_) {
+          // ignore parse error
+        }
+        throw new Error(detail || `Backend trả về lỗi (HTTP ${response.status}).`);
+      }
+      return response.json();
+    }
+
+    function formatDate(isoString) {
+      if (!isoString) return '—';
+      const date = new Date(isoString);
+      if (Number.isNaN(date.getTime())) return isoString;
+      return date.toLocaleString('vi-VN');
+    }
+
+    function availabilityBadge(text) {
+      const normalized = (text || '').toLowerCase();
+      let colorClasses = 'bg-gray-50 text-gray-600';
+      let dotClasses = 'bg-gray-400';
+      if (normalized.includes('in stock') || normalized.includes('còn hàng')) {
+        colorClasses = 'bg-green-50 text-green-700';
+        dotClasses = 'bg-green-500';
+      } else if (normalized.includes('out of stock') || normalized.includes('hết hàng')) {
+        colorClasses = 'bg-red-50 text-red-700';
+        dotClasses = 'bg-red-500';
+      }
+      const safeText = text || '—';
+      return `
+        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${colorClasses}">
+          <span class="w-1.5 h-1.5 rounded-full ${dotClasses}"></span>
+          ${escapeHtml(safeText)}
+        </span>
+      `;
+    }
+
+    function escapeHtml(value) {
+      const div = document.createElement('div');
+      div.textContent = value;
+      return div.innerHTML;
+    }
+
+    // ===== Render =====
+
+    function renderTableLoading() {
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="5" class="px-5 py-8 text-center text-gray-400">Đang tải...</td>
+        </tr>
+      `;
+    }
+
+    function renderTableEmpty() {
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="5" class="px-5 py-8 text-center text-gray-400">Không có dữ liệu.</td>
+        </tr>
+      `;
+    }
+
+    function renderTableRows(items) {
+      if (!items.length) {
+        renderTableEmpty();
+        return;
+      }
+      tableBody.innerHTML = items
+        .map((item) => `
+          <tr class="hover:bg-gray-50 transition-colors">
+            <td class="px-5 py-3 max-w-xs truncate text-accent-600">
+              <a href="${escapeHtml(item.url || '#')}" target="_blank" rel="noopener noreferrer" class="hover:underline">
+                ${escapeHtml(item.url || '')}
+              </a>
+            </td>
+            <td class="px-5 py-3 text-gray-900">${escapeHtml(item.title || '')}</td>
+            <td class="px-5 py-3 text-gray-700">${escapeHtml(item.price || '—')}</td>
+            <td class="px-5 py-3">${availabilityBadge(item.availability)}</td>
+            <td class="px-5 py-3 text-gray-500">${formatDate(item.crawled_at)}</td>
+          </tr>
+        `)
+        .join('');
+    }
+
+    function renderCrawlStatus(status) {
+      const map = {
+        idle: { text: 'Chưa chạy', dot: 'bg-gray-400' },
+        running: { text: 'Đang chạy', dot: 'bg-yellow-500' },
+        done: { text: 'Hoàn tất', dot: 'bg-green-500' },
+        error: { text: 'Lỗi', dot: 'bg-red-500' },
+      };
+      const info = map[status] || { text: status || 'Không rõ', dot: 'bg-gray-400' };
+      statStatusText.textContent = info.text;
+      statStatusDot.className = `w-2.5 h-2.5 rounded-full ${info.dot}`;
+    }
+
+    function setCrawlButtonRunning(isRunning) {
+      startCrawlBtn.disabled = isRunning;
+      startCrawlBtnLabel.textContent = isRunning ? 'Đang crawl...' : 'Start Crawl';
+      startCrawlBtnIcon.classList.toggle('hidden', isRunning);
+      startCrawlBtnSpinner.classList.toggle('hidden', !isRunning);
+    }
+
+    // ===== Data loading =====
+
+    async function loadResults() {
+      renderTableLoading();
+      try {
+        const params = new URLSearchParams({
+          page: String(currentPage),
+          page_size: String(PAGE_SIZE),
+        });
+        if (currentSearch) {
+          params.set('search', currentSearch);
+        }
+        const data = await fetchJson(`/results?${params.toString()}`);
+        renderTableRows(data.items || []);
+
+        const totalPages = Math.max(data.total_pages || 0, 1);
+        pageCurrentEl.textContent = String(data.page || currentPage);
+        pageTotalEl.textContent = String(totalPages);
+        showingCount.textContent = String((data.items || []).length);
+        totalCount.textContent = String(data.total_items || 0);
+
+        prevPageBtn.disabled = currentPage <= 1;
+        nextPageBtn.disabled = currentPage >= totalPages;
+
+        hideError();
+      } catch (err) {
+        renderTableEmpty();
+        showError(err.message);
+      }
+    }
+
+    async function loadStats() {
+      try {
+        const data = await fetchJson('/stats');
+        statTotalItems.textContent = String(data.total_items ?? 0);
+        statLastCrawled.textContent = formatDate(data.last_crawled_at);
+        hideError();
+      } catch (err) {
+        statTotalItems.textContent = '—';
+        statLastCrawled.textContent = '—';
+        showError(err.message);
+      }
+    }
+
+    async function loadCrawlStatusOnce() {
+      try {
+        const data = await fetchJson('/crawl/status');
+        renderCrawlStatus(data.status);
+        setCrawlButtonRunning(data.status === 'running');
+        setConfigFormEnabled(data.status !== 'running');
+        hideError();
+        return data;
+      } catch (err) {
+        showError(err.message);
+        return null;
+      }
+    }
+
+    // ===== Config form =====
+
+    function setConfigFormEnabled(enabled) {
+      configFormInputs.forEach((input) => {
+        input.disabled = !enabled;
+      });
+      saveConfigBtn.disabled = !enabled;
+      configDisabledNotice.classList.toggle('hidden', enabled);
+    }
+
+    function fillConfigForm(config) {
+      configStartUrlInput.value = (config.start_urls && config.start_urls[0]) || '';
+      configAllowedDomainInput.value = (config.allowed_domains && config.allowed_domains[0]) || '';
+      configContentSelectorInput.value = config.content_selector || '';
+      configMaxPagesInput.value = config.max_pages ?? '';
+    }
+
+    async function loadConfig() {
+      try {
+        const data = await fetchJson('/config');
+        fillConfigForm(data);
+        hideError();
+      } catch (err) {
+        showError(err.message);
+      }
+    }
+
+    async function handleSaveConfig(event) {
+      event.preventDefault();
+      configSaveMessage.classList.add('hidden');
+      const payload = {
+        start_urls: [configStartUrlInput.value.trim()],
+        allowed_domains: [configAllowedDomainInput.value.trim()],
+        content_selector: configContentSelectorInput.value.trim(),
+        title_selector: 'title::text',
+        max_pages: Number(configMaxPagesInput.value),
+      };
+      try {
+        saveConfigBtn.disabled = true;
+        const data = await fetchJson('/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        fillConfigForm(data);
+        configSaveMessage.classList.remove('hidden');
+        setTimeout(() => configSaveMessage.classList.add('hidden'), 3000);
+        hideError();
+      } catch (err) {
+        showError(err.message);
+      } finally {
+        saveConfigBtn.disabled = false;
+      }
+    }
+
+
+    // ===== Crawl polling =====
+
+    function stopCrawlPolling() {
+      if (crawlPollTimerId !== null) {
+        clearInterval(crawlPollTimerId);
+        crawlPollTimerId = null;
+      }
+    }
+
+    function startCrawlPolling() {
+      stopCrawlPolling();
+      crawlPollTimerId = setInterval(async () => {
+        const data = await loadCrawlStatusOnce();
+        if (!data) return;
+        if (data.status === 'running') return;
+
+        // Crawl đã dừng (done/error): ngừng poll và refresh dữ liệu.
+        stopCrawlPolling();
+        if (data.status === 'error' && data.error) {
+          showError(`Crawl kết thúc với lỗi: ${data.error}`);
+        }
+        await Promise.all([loadResults(), loadStats()]);
+      }, CRAWL_POLL_INTERVAL_MS);
+    }
+
+    async function handleStartCrawl() {
+      // Gửi kèm cấu hình đang nhập trong form (Start URL, Allowed Domain,
+      // CSS Selector) để backend forward trực tiếp cho spider qua `-a`,
+      // không cần bấm "Lưu cấu hình" trước.
+      const payload = {
+        start_url: configStartUrlInput.value.trim() || null,
+        allowed_domain: configAllowedDomainInput.value.trim() || null,
+        css_selector: configContentSelectorInput.value.trim() || null,
+      };
+      try {
+        setCrawlButtonRunning(true);
+        renderCrawlStatus('running');
+        await fetchJson('/crawl', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        hideError();
+        startCrawlPolling();
+
+      } catch (err) {
+        setCrawlButtonRunning(false);
+        showError(err.message);
+        // Đồng bộ lại trạng thái thật từ backend (ví dụ 409 vì đã có crawl đang chạy).
+        const data = await loadCrawlStatusOnce();
+        if (data && data.status === 'running') {
+          startCrawlPolling();
+        }
+      }
+    }
+
+    // ===== Event listeners =====
+
+    startCrawlBtn.addEventListener('click', handleStartCrawl);
+    configForm.addEventListener('submit', handleSaveConfig);
+
+
+    prevPageBtn.addEventListener('click', () => {
+      if (currentPage <= 1) return;
+      currentPage -= 1;
+      loadResults();
+    });
+
+    nextPageBtn.addEventListener('click', () => {
+      currentPage += 1;
+      loadResults();
+    });
+
+    searchInput.addEventListener('input', () => {
+      clearTimeout(searchDebounceTimerId);
+      searchDebounceTimerId = setTimeout(() => {
+        currentSearch = searchInput.value.trim();
+        currentPage = 1;
+        loadResults();
+      }, 400);
+    });
+
+    // ===== Init =====
+
+    (async function init() {
+      await Promise.all([loadResults(), loadStats(), loadConfig()]);
+      const status = await loadCrawlStatusOnce();
+      if (status && status.status === 'running') {
+        startCrawlPolling();
+      }
+    })();
+
+  </script>
+
+</body>
+</html>

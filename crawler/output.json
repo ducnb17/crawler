@@ -1,0 +1,821 @@
+[
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/60",
+    "title": "Asus VivoBook X441NA-GA190",
+    "price": "$295.99",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/61",
+    "title": "Prestigio SmartBook 133S Dark Grey",
+    "price": "$299",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/62",
+    "title": "Prestigio SmartBook 133S Gold",
+    "price": "$299",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/32",
+    "title": "Aspire E1-510",
+    "price": "$306.99",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/63",
+    "title": "Lenovo V110-15IAP",
+    "price": "$321.94",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/64",
+    "title": "Lenovo V110-15IAP",
+    "price": "$356.49",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/65",
+    "title": "Hewlett Packard 250 G6 Dark Ash Silver",
+    "price": "$364.46",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/66",
+    "title": "Acer Aspire 3 A315-31 Black",
+    "price": "$372.7",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/67",
+    "title": "Acer Aspire A315-31-C33J",
+    "price": "$379.94",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/68",
+    "title": "Acer Aspire ES1-572 Black",
+    "price": "$379.95",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/69",
+    "title": "Acer Aspire 3 A315-31 Black",
+    "price": "$391.48",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/70",
+    "title": "Acer Aspire 3 A315-21",
+    "price": "$393.88",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/45",
+    "title": "Asus VivoBook Max",
+    "price": "$399",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/71",
+    "title": "Asus VivoBook E502NA-GO022T Dark Blue",
+    "price": "$399.99",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/72",
+    "title": "Lenovo ThinkPad E31-80",
+    "price": "$404.23",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/73",
+    "title": "Acer Aspire 3 A315-31 Black",
+    "price": "$408.98",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/74",
+    "title": "Lenovo V110-15ISK",
+    "price": "$409.63",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/75",
+    "title": "Acer Aspire ES1-732 Black",
+    "price": "$410.46",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/76",
+    "title": "Asus VivoBook 15 X540NA-GQ026T",
+    "price": "$410.66",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/31",
+    "title": "Packard 255 G2",
+    "price": "$416.99",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/77",
+    "title": "Asus EeeBook R416NA-FA014T",
+    "price": "$433.3",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/78",
+    "title": "Acer Aspire 3 A315-51",
+    "price": "$436.29",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/79",
+    "title": "Acer Aspire ES1-572 Black",
+    "price": "$436.29",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/80",
+    "title": "Acer Extensa 15 (2540) Black",
+    "price": "$439.73",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/81",
+    "title": "Acer Aspire ES1-572 Black",
+    "price": "$454.62",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/82",
+    "title": "Lenovo V110-15ISK",
+    "price": "$454.73",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/83",
+    "title": "Acer Aspire A315-51-33TG",
+    "price": "$457.38",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/84",
+    "title": "Lenovo V110-15IKB",
+    "price": "$465.95",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/85",
+    "title": "Asus VivoBook 15 X540UA-DM260 Chocolate Black",
+    "price": "$468.56",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/86",
+    "title": "Acer Aspire ES1-572 Black",
+    "price": "$469.1",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/87",
+    "title": "Lenovo V510 Black",
+    "price": "$484.23",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/88",
+    "title": "Acer Aspire ES1-572 Black",
+    "price": "$485.9",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/89",
+    "title": "Lenovo V510 Black",
+    "price": "$487.8",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/90",
+    "title": "Acer Swift 1 SF113-31 Silver",
+    "price": "$488.64",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/46",
+    "title": "Dell Vostro 15",
+    "price": "$488.78",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/91",
+    "title": "Acer Aspire 3 A315-51 Black",
+    "price": "$494.71",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/92",
+    "title": "Dell Vostro 15 (3568) Red",
+    "price": "$497.17",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/93",
+    "title": "Lenovo V510 Black",
+    "price": "$498.23",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/42",
+    "title": "HP 250 G3",
+    "price": "$520.99",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/47",
+    "title": "Acer Spin 5",
+    "price": "$564.98",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/44",
+    "title": "HP 350 G1",
+    "price": "$577.99",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/36",
+    "title": "Aspire E1-572G",
+    "price": "$581.99",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/38",
+    "title": "Pavilion",
+    "price": "$609.99",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/48",
+    "title": "Acer Aspire A515-51-5654",
+    "price": "$679",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/49",
+    "title": "Dell Inspiron 15",
+    "price": "$679",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/50",
+    "title": "Asus VivoBook S14",
+    "price": "$729",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/34",
+    "title": "ProBook",
+    "price": "$739.99",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/39",
+    "title": "Inspiron 15",
+    "price": "$745.99",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/51",
+    "title": "Asus ROG STRIX GL553VD-DM256",
+    "price": "$799",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/52",
+    "title": "Acer Nitro 5 AN515-51",
+    "price": "$809",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/53",
+    "title": "Asus ROG STRIX GL553VD-DM256",
+    "price": "$899",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/54",
+    "title": "Lenovo ThinkPad L570",
+    "price": "$999",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/37",
+    "title": "ThinkPad Yoga",
+    "price": "$1033.99",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/94",
+    "title": "Lenovo ThinkPad L460",
+    "price": "$1096.02",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/95",
+    "title": "Dell Inspiron 15 (7567) Black",
+    "price": "$1098.42",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/96",
+    "title": "MSI GL72M 7RDX",
+    "price": "$1099",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/97",
+    "title": "MSI GL72M 7RDX",
+    "price": "$1099",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/98",
+    "title": "Asus ROG Strix GL553VD-DM535T",
+    "price": "$1101.83",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/99",
+    "title": "Dell Latitude 5280",
+    "price": "$1102.66",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/100",
+    "title": "Dell Latitude 5480",
+    "price": "$1110.14",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/101",
+    "title": "Lenovo Legion Y520-15IKBM",
+    "price": "$1112.91",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/102",
+    "title": "Toshiba Portege Z30-C-16J Grey",
+    "price": "$1114.55",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/103",
+    "title": "Acer Predator Helios 300 (PH317-51)",
+    "price": "$1123.87",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/104",
+    "title": "Acer Aspire 7 A715-71G",
+    "price": "$1123.87",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/105",
+    "title": "Dell Inspiron 17 2in1 (7779) Silver",
+    "price": "$1124.2",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/106",
+    "title": "Dell Latitude 5480",
+    "price": "$1133.82",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/107",
+    "title": "Lenovo Legion Y520",
+    "price": "$1133.91",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/108",
+    "title": "Asus AsusPro Advanced BU401LA-FA271G Dark Grey",
+    "price": "$1139.54",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/109",
+    "title": "Acer Nitro 5 AN515-51",
+    "price": "$1140.62",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/110",
+    "title": "Dell Latitude 5480",
+    "price": "$1143.4",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/111",
+    "title": "Dell Inspiron 15 (7567) Black",
+    "price": "$1144.2",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/112",
+    "title": "Dell Latitude 5580",
+    "price": "$1144.4",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/55",
+    "title": "Lenovo Legion Y520-15IKBM",
+    "price": "$1149",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/113",
+    "title": "MSI GP62M 7RDX Leopard",
+    "price": "$1149",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/114",
+    "title": "Lenovo Yoga 720 Grey",
+    "price": "$1149.73",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/115",
+    "title": "Toshiba Portege Z30-C-16L Grey",
+    "price": "$1154.04",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/116",
+    "title": "Acer TravelMate P645-S-511A Black",
+    "price": "$1170.1",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/117",
+    "title": "Dell Latitude 5580",
+    "price": "$1178.19",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/33",
+    "title": "ThinkPad T540p",
+    "price": "$1178.99",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/118",
+    "title": "MSI GS63 7RD Stealth",
+    "price": "$1179",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/119",
+    "title": "Dell Latitude 5480",
+    "price": "$1187.88",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/120",
+    "title": "Acer Predator Helios 300 (PH317-51)",
+    "price": "$1187.98",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/121",
+    "title": "MSI GL62M 7REX",
+    "price": "$1199",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/122",
+    "title": "MSI GL62M 7REX2",
+    "price": "$1199",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/123",
+    "title": "Lenovo Yoga 910 Grey",
+    "price": "$1199.73",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/124",
+    "title": "Toshiba Portege X30-D-10J Black/Blue",
+    "price": "$1203.41",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/125",
+    "title": "Lenovo IdeaPad Miix 510 Platinum Silver",
+    "price": "$1212.16",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/126",
+    "title": "Acer Predator Helios 300 (PH317-51)",
+    "price": "$1221.58",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/43",
+    "title": "ThinkPad Yoga",
+    "price": "$1223.99",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/127",
+    "title": "Asus VivoBook Pro 15 N580VN-FI006T Gold Metal",
+    "price": "$1235.49",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/128",
+    "title": "Dell Latitude 5480",
+    "price": "$1238.37",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/129",
+    "title": "Asus ZenBook UX530UX-FY040T Blue",
+    "price": "$1239.2",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/41",
+    "title": "ThinkPad X230",
+    "price": "$1244.99",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/130",
+    "title": "Asus ROG Strix GL753VE-GC096T",
+    "price": "$1259",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/131",
+    "title": "Apple MacBook Air 13\"",
+    "price": "$1260.13",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/132",
+    "title": "Dell Latitude 5480",
+    "price": "$1271.06",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/133",
+    "title": "Hewlett Packard Spectre 13-v106na Dark Ash Silver",
+    "price": "$1273.11",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/40",
+    "title": "Dell XPS 13",
+    "price": "$1281.99",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/134",
+    "title": "Toshiba Portege Z30-C-16K Grey",
+    "price": "$1294.74",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/135",
+    "title": "MSI GL62VR 7RFX",
+    "price": "$1299",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/136",
+    "title": "Dell Latitude 5480",
+    "price": "$1310.39",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/35",
+    "title": "ThinkPad X240",
+    "price": "$1311.99",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/137",
+    "title": "Hewlett Packard ProBook 640 G3",
+    "price": "$1326.83",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/138",
+    "title": "Apple MacBook Pro 13\" Space Gray",
+    "price": "$1333",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/139",
+    "title": "Dell Latitude 5580",
+    "price": "$1337.28",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/140",
+    "title": "Dell Latitude 5480",
+    "price": "$1338.37",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/141",
+    "title": "Dell Latitude 5580",
+    "price": "$1341.22",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/142",
+    "title": "Apple MacBook Air 13\"",
+    "price": "$1347.78",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/143",
+    "title": "Lenovo ThinkPad T470",
+    "price": "$1349.23",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/144",
+    "title": "Lenovo ThinkPad Yoga 370 Black",
+    "price": "$1362.24",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/145",
+    "title": "Toshiba Portege X20W-D-10V Black/Blue",
+    "price": "$1366.32",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/146",
+    "title": "Asus ASUSPRO B9440UA-GV0279R Gray",
+    "price": "$1381.13",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/56",
+    "title": "Lenovo Legion Y720",
+    "price": "$1399",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/147",
+    "title": "Asus ROG Strix GL702VM-GC146T",
+    "price": "$1399",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/57",
+    "title": "Asus ROG Strix GL702ZC-GC154T",
+    "price": "$1769",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/58",
+    "title": "Asus ROG Strix GL702ZC-GC209T",
+    "price": "$1769",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  },
+  {
+    "url": "https://webscraper.io/test-sites/e-commerce/allinone/product/59",
+    "title": "Asus ROG Strix SCAR Edition GL503VM-ED115T",
+    "price": "$1799",
+    "availability": "",
+    "crawled_at": "2026-07-14T18:55:35.113072+00:00"
+  }
+]

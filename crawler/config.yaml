@@ -1,0 +1,14 @@
+start_urls:
+- https://books.toscrape.com/
+allowed_domains:
+- books.toscrape.com
+title_selector: title::text
+content_selector: .product_pod
+delay: 1
+user_agent: 'crawler-bot/1.0 (+https://github.com/your-org/crawler; contact: your-email@example.com)'
+max_pages: 50
+# Random sleep (giây) giữa các request trong core/fetcher.py (nhánh Requests+BS4).
+min_delay: 1
+max_delay: 3
+
+

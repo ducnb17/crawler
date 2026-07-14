@@ -1,0 +1,15 @@
+# .clinerules
+
+## Tech Stack
+- Python 3.10+ (WSL Ubuntu), Scrapy, BeautifulSoup4, Requests, cloudscraper
+- Virtualenv: `venv_wsl` (`source venv_wsl/bin/activate`)
+
+## Core Conventions
+- Không tự cài dependency mới ngoài `requirements.txt` — phải hỏi trước.
+- Giữ comment code bằng tiếng Anh, giao tiếp với user bằng tiếng Việt.
+- Chỉ chỉnh sửa đúng các file được chỉ định, không tự refactor file khác.
+
+## Workflow Rules
+- **Task lớn (>2 file / đổi kiến trúc)**: Bắt buộc dùng **Plan Mode** trước. Chỉ code khi user duyệt Plan.
+- **Task nhỏ (fix bug, thêm hàm)**: Chuyển thẳng sang **Act Mode**.
+- Khi gặp lỗi lệnh Terminal quá 2 lần: Dừng lại và hỏi người dùng, không thử lại liên tục.
