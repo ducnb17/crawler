@@ -61,6 +61,13 @@
     </div>
   </div>
 
+  <!-- Crawl warning banner -->
+  <div id="crawl-warning-banner" class="hidden max-w-7xl mx-auto px-6 pt-4" role="alert">
+    <div class="bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-lg px-4 py-3">
+      <span id="crawl-warning-text"></span>
+    </div>
+  </div>
+
   <main class="max-w-7xl mx-auto px-6 py-8">
 
     <!-- Cấu hình Crawl -->
@@ -146,17 +153,11 @@
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead>
-            <tr class="bg-gray-50 border-b border-gray-200 text-left text-gray-500 uppercase text-xs tracking-wide">
-              <th class="px-5 py-3 font-medium">URL</th>
-              <th class="px-5 py-3 font-medium">Title</th>
-              <th class="px-5 py-3 font-medium">Price</th>
-              <th class="px-5 py-3 font-medium">Availability</th>
-              <th class="px-5 py-3 font-medium">Crawled At</th>
-            </tr>
+            <tr id="table-head" class="bg-gray-50 border-b border-gray-200 text-left text-gray-500 uppercase text-xs tracking-wide"></tr>
           </thead>
           <tbody id="table-body" class="divide-y divide-gray-100">
             <tr>
-              <td colspan="5" class="px-5 py-8 text-center text-gray-400">Đang tải...</td>
+              <td colspan="1" class="px-5 py-8 text-center text-gray-400">Đang tải...</td>
             </tr>
           </tbody>
         </table>
@@ -206,6 +207,7 @@
     // ===== State =====
     let currentPage = 1;
     let currentSearch = '';
+    let currentColumns = [];
     let crawlPollTimerId = null;
     let searchDebounceTimerId = null;
 
@@ -218,6 +220,8 @@
     const errorBanner = document.getElementById('error-banner');
     const errorBannerText = document.getElementById('error-banner-text');
     const errorBannerClose = document.getElementById('error-banner-close');
+    const crawlWarningBanner = document.getElementById('crawl-warning-banner');
+    const crawlWarningText = document.getElementById('crawl-warning-text');
 
     const statTotalItems = document.getElementById('stat-total-items');
     const statStatusDot = document.getElementById('stat-status-dot');
@@ -228,6 +232,7 @@
     const showingCount = document.getElementById('showing-count');
     const totalCount = document.getElementById('total-count');
 
+    const tableHead = document.getElementById('table-head');
     const tableBody = document.getElementById('table-body');
     const pageCurrentEl = document.getElementById('page-current');
     const pageTotalEl = document.getElementById('page-total');
@@ -261,6 +266,17 @@
       errorBanner.classList.add('hidden');
     }
 
+    function updateCrawlWarning(crawlStatus) {
+      const pagesFailed = Number(crawlStatus?.pages_failed);
+      const crawlFinished = crawlStatus?.status === 'done' || crawlStatus?.status === 'error';
+      if (crawlFinished && Number.isFinite(pagesFailed) && pagesFailed > 0) {
+        crawlWarningText.textContent = `${pagesFailed} trang crawl thất bại, xem chi tiết trong crawl_log.txt`;
+        crawlWarningBanner.classList.remove('hidden');
+        return;
+      }
+      crawlWarningBanner.classList.add('hidden');
+    }
+
     errorBannerClose.addEventListener('click', hideError);
 
     async function fetchJson(path, options) {
@@ -291,30 +307,14 @@
       return date.toLocaleString('vi-VN');
     }
 
-    function availabilityBadge(text) {
-      const normalized = (text || '').toLowerCase();
-      let colorClasses = 'bg-gray-50 text-gray-600';
-      let dotClasses = 'bg-gray-400';
-      if (normalized.includes('in stock') || normalized.includes('còn hàng')) {
-        colorClasses = 'bg-green-50 text-green-700';
-        dotClasses = 'bg-green-500';
-      } else if (normalized.includes('out of stock') || normalized.includes('hết hàng')) {
-        colorClasses = 'bg-red-50 text-red-700';
-        dotClasses = 'bg-red-500';
-      }
-      const safeText = text || '—';
-      return `
-        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${colorClasses}">
-          <span class="w-1.5 h-1.5 rounded-full ${dotClasses}"></span>
-          ${escapeHtml(safeText)}
-        </span>
-      `;
-    }
-
     function escapeHtml(value) {
       const div = document.createElement('div');
-      div.textContent = value;
+      div.textContent = String(value);
       return div.innerHTML;
+    }
+
+    function displayValue(value) {
+      return value === null || value === undefined ? '—' : String(value);
     }
 
     // ===== Render =====
@@ -322,7 +322,7 @@
     function renderTableLoading() {
       tableBody.innerHTML = `
         <tr>
-          <td colspan="5" class="px-5 py-8 text-center text-gray-400">Đang tải...</td>
+          <td colspan="${Math.max(currentColumns.length, 1)}" class="px-5 py-8 text-center text-gray-400">Đang tải...</td>
         </tr>
       `;
     }
@@ -330,12 +330,38 @@
     function renderTableEmpty() {
       tableBody.innerHTML = `
         <tr>
-          <td colspan="5" class="px-5 py-8 text-center text-gray-400">Không có dữ liệu.</td>
+          <td colspan="${Math.max(currentColumns.length, 1)}" class="px-5 py-8 text-center text-gray-400">Không có dữ liệu.</td>
         </tr>
       `;
     }
 
-    function renderTableRows(items) {
+    function renderTableHeader(columns) {
+      currentColumns = columns;
+      tableHead.innerHTML = columns
+        .map((column) => `<th class="px-5 py-3 font-medium">${escapeHtml(column)}</th>`)
+        .join('');
+    }
+
+    function renderTableCell(item, column) {
+      const value = item?.[column];
+      if (column === 'url') {
+        const url = value === null || value === undefined ? '#' : String(value);
+        return `
+          <td class="px-5 py-3 max-w-xs truncate text-accent-600">
+            <a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="hover:underline">
+              ${escapeHtml(displayValue(value))}
+            </a>
+          </td>
+        `;
+      }
+      if (column === 'crawled_at') {
+        return `<td class="px-5 py-3 text-gray-500">${escapeHtml(formatDate(value))}</td>`;
+      }
+      return `<td class="px-5 py-3 text-gray-700">${escapeHtml(displayValue(value))}</td>`;
+    }
+
+    function renderTableRows(items, columns) {
+      renderTableHeader(columns);
       if (!items.length) {
         renderTableEmpty();
         return;
@@ -343,15 +369,7 @@
       tableBody.innerHTML = items
         .map((item) => `
           <tr class="hover:bg-gray-50 transition-colors">
-            <td class="px-5 py-3 max-w-xs truncate text-accent-600">
-              <a href="${escapeHtml(item.url || '#')}" target="_blank" rel="noopener noreferrer" class="hover:underline">
-                ${escapeHtml(item.url || '')}
-              </a>
-            </td>
-            <td class="px-5 py-3 text-gray-900">${escapeHtml(item.title || '')}</td>
-            <td class="px-5 py-3 text-gray-700">${escapeHtml(item.price || '—')}</td>
-            <td class="px-5 py-3">${availabilityBadge(item.availability)}</td>
-            <td class="px-5 py-3 text-gray-500">${formatDate(item.crawled_at)}</td>
+            ${columns.map((column) => renderTableCell(item, column)).join('')}
           </tr>
         `)
         .join('');
@@ -389,7 +407,8 @@
           params.set('search', currentSearch);
         }
         const data = await fetchJson(`/results?${params.toString()}`);
-        renderTableRows(data.items || []);
+        const columns = Array.isArray(data.columns) ? data.columns : [];
+        renderTableRows(data.items || [], columns);
 
         const totalPages = Math.max(data.total_pages || 0, 1);
         pageCurrentEl.textContent = String(data.page || currentPage);
@@ -424,6 +443,7 @@
       try {
         const data = await fetchJson('/crawl/status');
         renderCrawlStatus(data.status);
+        updateCrawlWarning(data);
         setCrawlButtonRunning(data.status === 'running');
         setConfigFormEnabled(data.status !== 'running');
         hideError();
@@ -527,6 +547,7 @@
       try {
         setCrawlButtonRunning(true);
         renderCrawlStatus('running');
+        updateCrawlWarning({ status: 'running' });
         await fetchJson('/crawl', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

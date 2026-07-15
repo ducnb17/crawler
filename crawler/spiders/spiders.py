@@ -99,6 +99,16 @@ class GenericSpider(scrapy.Spider):
         self.title_selector = config.get("title_selector", "title::text")
         # Số trang tối đa sẽ follow qua phân trang (li.next). 0/không đặt = không giới hạn.
         self.max_pages = config.get("max_pages", 0) or 0
+        # Một URL có thể được retry hoặc fallback Playwright. Chỉ tính một lần
+        # khi URL đó thực sự thất bại để dashboard phản ánh đúng số trang lỗi.
+        self._failed_urls = set()
+
+    def _record_page_failure(self, url):
+        """Tăng custom stat đúng một lần cho mỗi URL lỗi."""
+        if url in self._failed_urls:
+            return
+        self._failed_urls.add(url)
+        self.crawler.stats.inc_value("pages_failed")
 
 
     def start_requests(self):
@@ -106,8 +116,23 @@ class GenericSpider(scrapy.Spider):
             yield scrapy.Request(
                 url,
                 callback=self.parse,
+                errback=self.handle_request_error,
                 meta={"is_fallback": False, "page_count": 1},
             )
+
+    def handle_request_error(self, failure):
+        """Ghi nhận lỗi tải từng URL sau khi Scrapy đã retry, không dừng spider."""
+        request = getattr(failure, "request", None)
+        url = getattr(request, "url", "<unknown URL>")
+        error_type = getattr(getattr(failure, "type", None), "__name__", type(failure).__name__)
+        reason = failure.getErrorMessage() if hasattr(failure, "getErrorMessage") else str(failure)
+        self.logger.error(
+            "Không thể tải trang | URL: %s | Lỗi: %s | Lý do: %s",
+            url,
+            error_type,
+            reason,
+        )
+        self._record_page_failure(url)
 
     def _extract_text(self, response):
         """Lấy text thô từ content_selector để đánh giá độ dài nội dung.
@@ -189,44 +214,72 @@ class GenericSpider(scrapy.Spider):
 
         # Nếu đây là response tĩnh (chưa dùng Playwright) và nội dung thiếu,
         # phát lại request qua Playwright để render JS rồi parse lại.
-        if not is_fallback and self._is_content_insufficient(response):
-            self.logger.info(
-                "Nội dung tĩnh quá ít (%s), fallback sang Playwright: %s",
-                len(self._extract_text(response)),
+        try:
+            if not is_fallback and self._is_content_insufficient(response):
+                self.logger.info(
+                    "Nội dung tĩnh quá ít (%s), fallback sang Playwright: %s",
+                    len(self._extract_text(response)),
+                    response.url,
+                )
+                yield scrapy.Request(
+                    response.url,
+                    callback=self.parse,
+                    errback=self.handle_request_error,
+                    dont_filter=True,
+                    meta={
+                        "is_fallback": True,
+                        "playwright": True,
+                        "playwright_include_page": False,
+                        "page_count": page_count,
+                    },
+                )
+                return
+
+            # content_selector (vd: ".product_pod") có thể khớp nhiều phần tử
+            # trên 1 trang -> yield 1 Item riêng cho MỖI phần tử.
+            content_nodes = response.css(self.content_selector)
+            if not content_nodes:
+                raise ValueError(f"Selector không khớp phần tử nào: {self.content_selector!r}")
+
+            if is_fallback:
+                self.logger.info("Đã render bằng Playwright thành công: %s", response.url)
+
+            now = datetime.now(timezone.utc).isoformat()
+            for node in content_nodes:
+                try:
+                    yield self._extract_product_item(node, response, now)
+                except Exception as exc:  # noqa: BLE001 - không bỏ cả trang vì 1 item lỗi
+                    self.logger.exception(
+                        "Không thể trích xuất item | URL: %s | Lỗi: %s: %s",
+                        response.url,
+                        type(exc).__name__,
+                        exc,
+                    )
+        except Exception as exc:  # noqa: BLE001 - log lỗi response và vẫn thử trang kế tiếp
+            self.logger.exception(
+                "Không thể trích xuất dữ liệu từ trang | URL: %s | Lỗi: %s: %s",
                 response.url,
+                type(exc).__name__,
+                exc,
             )
-            yield scrapy.Request(
+            self._record_page_failure(response.url)
+
+        # Tách riêng việc follow phân trang: trang hiện tại lỗi extract vẫn không
+        # làm dừng các trang phía sau nếu link phân trang vẫn đọc được.
+        try:
+            next_href = self._next_page_url(response)
+            if next_href and (self.max_pages <= 0 or page_count < self.max_pages):
+                next_url = response.urljoin(next_href)
+                yield scrapy.Request(
+                    next_url,
+                    callback=self.parse,
+                    errback=self.handle_request_error,
+                    meta={"is_fallback": False, "page_count": page_count + 1},
+                )
+        except Exception as exc:  # noqa: BLE001 - lỗi pagination không crash spider
+            self.logger.exception(
+                "Không thể đọc phân trang | URL: %s | Lỗi: %s: %s",
                 response.url,
-                callback=self.parse,
-                dont_filter=True,
-                meta={
-                    "is_fallback": True,
-                    "playwright": True,
-                    "playwright_include_page": False,
-                    "page_count": page_count,
-                },
-            )
-            return
-
-        if is_fallback:
-            self.logger.info("Đã render bằng Playwright thành công: %s", response.url)
-
-        now = datetime.now(timezone.utc).isoformat()
-
-        # content_selector (vd: ".product_pod") có thể khớp nhiều phần tử trên
-        # 1 trang (nhiều sách) -> yield 1 Item riêng cho MỖI phần tử, không gộp
-        # chung thành 1 blob text.
-        content_nodes = response.css(self.content_selector)
-        for node in content_nodes:
-            yield self._extract_product_item(node, response, now)
-
-        # Theo link phân trang <li class="next"><a href="..."> để crawl hết các
-        # trang danh sách, giới hạn bởi max_pages trong config.yaml (0 = không giới hạn).
-        next_href = self._next_page_url(response)
-        if next_href and (self.max_pages <= 0 or page_count < self.max_pages):
-            next_url = response.urljoin(next_href)
-            yield scrapy.Request(
-                next_url,
-                callback=self.parse,
-                meta={"is_fallback": False, "page_count": page_count + 1},
+                type(exc).__name__,
+                exc,
             )

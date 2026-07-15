@@ -59,6 +59,8 @@ _crawl_state: dict = {
     "finished_at": None,
     "returncode": None,
     "error": None,
+    "pages_crawled": None,
+    "pages_failed": None,
 }
 # Lock để tránh 2 request POST /crawl cùng lúc khởi chạy 2 subprocess song song.
 _crawl_lock = asyncio.Lock()
@@ -67,6 +69,50 @@ _crawl_task: Optional[asyncio.Task] = None
 
 def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+def _parse_scrapy_stats(output_text: str) -> tuple[int, int]:
+    """Parse Scrapy stats từ output text để lấy pages_crawled và pages_failed.
+    
+    Scrapy in stats block ở cuối output với format:
+    [scrapy.statscollectors] INFO: Dumping Scrapy stats:
+    {'response_received_count': 10,
+     'downloader/exception_count': 2,
+     ...}
+    
+    Returns:
+        tuple[pages_crawled, pages_failed]
+    """
+    import re
+    
+    pages_crawled = 0
+    pages_failed = 0
+    
+    # Extract response_received_count (số trang crawl thành công)
+    match = re.search(r"'response_received_count':\s*(\d+)", output_text)
+    if match:
+        pages_crawled = int(match.group(1))
+    
+    # `pages_failed` là custom stat do GenericSpider ghi một lần cho mỗi URL
+    # không thể trích xuất. Không dùng downloader/exception_count vì chỉ số đó
+    # bao gồm từng lần retry, làm số trang lỗi bị đếm lặp.
+    match = re.search(r"'pages_failed':\s*(\d+)", output_text)
+    if match:
+        pages_failed += int(match.group(1))
+
+    # retry/max_reached tăng một lần cho mỗi request đã dùng hết retry, trái
+    # với downloader/exception_count tăng theo từng attempt.
+    match = re.search(r"'retry/max_reached':\s*(\d+)", output_text)
+    if match:
+        pages_failed += int(match.group(1))
+
+    # HTTP status bị HttpErrorMiddleware bỏ qua không đi qua parse(), nên
+    # không được GenericSpider ghi custom stat.
+    match = re.search(r"'httperror/response_ignored_count':\s*(\d+)", output_text)
+    if match:
+        pages_failed += int(match.group(1))
+    
+    return pages_crawled, pages_failed
 
 
 async def _run_crawl_process(
@@ -100,6 +146,8 @@ async def _run_crawl_process(
     print("=" * 70, flush=True)
 
     try:
+        output_buffer = []  # Buffer to collect all output for stats parsing
+        
         with open(log_path, "a", encoding="utf-8") as log_file:
             log_file.write(f"\n----- Crawl started at {_now_iso()} -----\n")
             log_file.write(f"Command: {' '.join(cmd)}\n")
@@ -123,15 +171,24 @@ async def _run_crawl_process(
                 print(f"[scrapy] {decoded}", end="", flush=True)
                 log_file.write(decoded)
                 log_file.flush()
+                output_buffer.append(decoded)
 
             returncode = await process.wait()
 
+        # Parse stats từ output buffer sau khi subprocess kết thúc
+        full_output = "".join(output_buffer)
+        pages_crawled, pages_failed = _parse_scrapy_stats(full_output)
+        
         _crawl_state["returncode"] = returncode
         _crawl_state["finished_at"] = _now_iso()
+        _crawl_state["pages_crawled"] = pages_crawled
+        _crawl_state["pages_failed"] = pages_failed
+        
         if returncode == 0:
             _crawl_state["status"] = "done"
             _crawl_state["error"] = None
             print(f"[CRAWL] Hoàn tất thành công lúc {_now_iso()}", flush=True)
+            print(f"[CRAWL] Stats: {pages_crawled} pages crawled, {pages_failed} pages failed", flush=True)
         else:
             _crawl_state["status"] = "error"
             _crawl_state["error"] = f"scrapy exited with code {returncode}"
@@ -173,6 +230,8 @@ async def start_crawl(payload: StartCrawlRequest = StartCrawlRequest()):
         _crawl_state["finished_at"] = None
         _crawl_state["returncode"] = None
         _crawl_state["error"] = None
+        _crawl_state["pages_crawled"] = None
+        _crawl_state["pages_failed"] = None
 
         print(
             f"[CRAWL] Nhận yêu cầu Start Crawl: start_url={payload.start_url!r}, "
@@ -201,6 +260,8 @@ def crawl_status():
         "finished_at": _crawl_state["finished_at"],
         "returncode": _crawl_state["returncode"],
         "error": _crawl_state["error"],
+        "pages_crawled": _crawl_state["pages_crawled"],
+        "pages_failed": _crawl_state["pages_failed"],
     }
 
 
@@ -214,6 +275,27 @@ def _get_db_connection() -> sqlite3.Connection:
     conn = sqlite3.connect(str(SQLITE_PATH))
     conn.row_factory = sqlite3.Row
     return conn
+
+
+def _result_columns(items: list[dict]) -> list[str]:
+    """Lấy union các key theo thứ tự xuất hiện, với URL/thời gian ở hai đầu."""
+    columns: list[str] = []
+    seen: set[str] = set()
+    for item in items:
+        for key in item:
+            if key not in seen:
+                columns.append(key)
+                seen.add(key)
+
+    # Chỉ đưa các cột thực sự có trong dữ liệu vào response.
+    if "url" in seen:
+        columns.remove("url")
+        columns.insert(0, "url")
+    if "crawled_at" in seen:
+        columns.remove("crawled_at")
+        columns.append("crawled_at")
+
+    return columns
 
 
 @app.get("/results")
@@ -237,8 +319,7 @@ def get_results(
 
         offset = (page - 1) * page_size
         rows = conn.execute(
-            f"SELECT url, title, content, price, availability, crawled_at "
-            f"FROM items {where_clause} "
+            f"SELECT * FROM items {where_clause} "
             f"ORDER BY crawled_at DESC LIMIT ? OFFSET ?",
             params + [page_size, offset],
         ).fetchall()
@@ -247,6 +328,7 @@ def get_results(
 
         return {
             "items": items,
+            "columns": _result_columns(items),
             "total_items": total_items,
             "total_pages": total_pages,
             "page": page,

@@ -1,14 +1,11 @@
 start_urls:
-- https://books.toscrape.com/
+- https://www.scrapethissite.com/pages/simple/
 allowed_domains:
-- books.toscrape.com
+- scrapethissite.com
 title_selector: title::text
-content_selector: .product_pod
+content_selector: .country-name.country-info.country-capital.country-area
 delay: 1
 user_agent: 'crawler-bot/1.0 (+https://github.com/your-org/crawler; contact: your-email@example.com)'
-max_pages: 50
-# Random sleep (giây) giữa các request trong core/fetcher.py (nhánh Requests+BS4).
+max_pages: 20
 min_delay: 1
 max_delay: 3
-
-
