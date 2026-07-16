@@ -18,7 +18,7 @@ dependencies = [
     "sse-starlette>=2.1",
     "prometheus-fastapi-instrumentator>=7",
     # Config
-    "pydantic>=2.9",
+    "pydantic[email]>=2.9",
     "pydantic-settings>=2.6",
     "python-multipart>=0.0.12",
     # DB
