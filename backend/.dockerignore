@@ -1,0 +1,16 @@
+__pycache__
+*.py[cod]
+.git
+.venv
+venv
+venv_wsl
+.pytest_cache
+.ruff_cache
+.mypy_cache
+secrets
+*.log
+.env
+.env.*
+!.env.example
+htmlcov
+coverage.xml

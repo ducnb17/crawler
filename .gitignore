@@ -87,3 +87,4 @@ httpcache/
 infra/helm/**/charts/
 infra/helm/**/Chart.lock.cline/
 .clinerules1
+backend/secrets/

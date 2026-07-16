@@ -1,0 +1,122 @@
+# ===== Production docker-compose =====
+# Usage:
+#   cp .env.prod.example .env.prod  # then edit secrets
+#   docker compose -f infra/docker-compose.prod.yml --env-file .env.prod up -d --build
+#
+# Services: postgres, redis, backend (API), worker, beat, frontend (nginx)
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-crawler}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-crawler}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-crawler} -d ${POSTGRES_DB:-crawler}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ../.env.prod
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-crawler}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-crawler}
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      AUTH_PRIVATE_KEY_PATH: /app/secrets/jwt_rs256.pem
+      AUTH_PUBLIC_KEY_PATH: /app/secrets/jwt_rs256.pub.pem
+    volumes:
+      - ../backend/secrets:/app/secrets:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8001:8001"
+
+  worker:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: >
+      celery -A app.worker.celery_app worker --loglevel=INFO
+      --concurrency=${CELERY_WORKER_CONCURRENCY:-2}
+      -Q crawl,schedule,webhook,export -P prefork
+    env_file:
+      - ../.env.prod
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-crawler}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-crawler}
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      AUTH_PRIVATE_KEY_PATH: /app/secrets/jwt_rs256.pem
+      AUTH_PUBLIC_KEY_PATH: /app/secrets/jwt_rs256.pub.pem
+    volumes:
+      - ../backend/secrets:/app/secrets:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  beat:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: ["celery", "-A", "app.worker.celery_app", "beat", "--loglevel=INFO"]
+    env_file:
+      - ../.env.prod
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-crawler}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-crawler}
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      AUTH_PRIVATE_KEY_PATH: /app/secrets/jwt_rs256.pem
+      AUTH_PUBLIC_KEY_PATH: /app/secrets/jwt_rs256.pub.pem
+    volumes:
+      - ../backend/secrets:/app/secrets:ro
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/}
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
+  redisdata:

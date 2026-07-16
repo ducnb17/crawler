@@ -1,0 +1,133 @@
+{
+  "app": {
+    "title": "Crawler Dashboard",
+    "subtitle": "Hệ thống crawler async"
+  },
+  "common": {
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "delete": "Xóa",
+    "edit": "Sửa",
+    "back": "Quay lại",
+    "loading": "Đang tải...",
+    "confirm": "Xác nhận",
+    "search": "Tìm kiếm",
+    "filter": "Lọc",
+    "actions": "Thao tác",
+    "yes": "Có",
+    "no": "Không",
+    "all": "Tất cả",
+    "created_at": "Tạo lúc",
+    "updated_at": "Cập nhật lúc",
+    "next": "Tiếp",
+    "prev": "Trước",
+    "page": "Trang",
+    "of": "trong",
+    "noData": "Không có dữ liệu"
+  },
+  "nav": {
+    "dashboard": "Tổng quan",
+    "jobs": "Jobs",
+    "results": "Kết quả",
+    "proxies": "Proxy",
+    "webhooks": "Webhook",
+    "users": "Người dùng",
+    "settings": "Cài đặt",
+    "logout": "Đăng xuất"
+  },
+  "auth": {
+    "login": "Đăng nhập",
+    "signup": "Đăng ký",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "full_name": "Họ tên",
+    "login_desc": "Đăng nhập để quản lý crawl jobs",
+    "signup_desc": "Chỉ khả dụng khi App ở chế độ development",
+    "to_signup": "Chưa có tài khoản? Đăng ký",
+    "to_login": "Đã có tài khoản? Đăng nhập",
+    "logout_success": "Đã đăng xuất"
+  },
+  "dashboard": {
+    "title": "Tổng quan",
+    "kpi_active_jobs": "Jobs đang chạy",
+    "kpi_items_today": "Items hôm nay",
+    "kpi_runs_24h": "Runs 24h",
+    "kpi_success_rate": "Tỉ lệ thành công",
+    "recent_runs": "Runs gần đây",
+    "items_per_day": "Items theo ngày"
+  },
+  "jobs": {
+    "title": "Crawl Jobs",
+    "new": "Tạo job mới",
+    "search": "Tìm job theo tên...",
+    "name": "Tên Job",
+    "description": "Mô tả",
+    "start_urls": "URL bắt đầu",
+    "allowed_domains": "Domain cho phép",
+    "selectors": "Selectors",
+    "item_container": "Selector item container",
+    "fields": "Trường trích xuất",
+    "next_page": "Selector trang kế",
+    "max_pages": "Trang tối đa",
+    "max_depth": "Sâu tối đa",
+    "delay": "Độ trễ (giây)",
+    "render_js": "Render JS (Playwright)",
+    "robots_obey": "Tuân thủ robots.txt",
+    "concurrency": "Số request song song",
+    "schedule_cron": "Cron (định kỳ)",
+    "is_active": "Kích hoạt",
+    "allow_concurrent_runs": "Cho phép chạy song song",
+    "status": "Trạng thái",
+    "wizard": {
+      "step_target": "Target",
+      "step_selectors": "Extractors",
+      "step_schedule": "Schedule & Options",
+      "field_name": "Tên trường",
+      "field_selector": "Selector",
+      "field_attr": "Attribute",
+      "field_transform": "Transform",
+      "add_field": "Thêm trường",
+      "auto_detect": "Auto-detect (AI)"
+    }
+  },
+  "runs": {
+    "title": "Lịch sử Runs",
+    "pages_crawled": "Trang crawl",
+    "pages_failed": "Trang lỗi",
+    "items_extracted": "Items trích",
+    "live_log": "Log trực tiếp",
+    "start_run": "Bắt đầu run",
+    "cancel_run": "Hủy run",
+    "triggered_by": "Khởi tạo bởi",
+    "finish": "Kết thúc",
+    "events_done": "Kết thúc SSE"
+  },
+  "results": {
+    "title": "Kết quả",
+    "url": "URL",
+    "data": "Dữ liệu",
+    "extracted_at": "Trích lúc",
+    "exportCsv": "Xuất CSV",
+    "exportJson": "Xuất JSON"
+  },
+  "users": {
+    "email": "Email",
+    "scopes": "Quyền",
+    "is_active": "Hoạt động",
+    "is_superuser": "Superuser",
+    "create": "Tạo người dùng",
+    "delete_warn": "Xóa người dùng này? Không thể hoàn tác."
+  },
+  "toast": {
+    "login_success": "Đăng nhập thành công",
+    "login_failed": "Đăng nhập thất bại",
+    "signup_success": "Đăng ký thành công",
+    "signup_failed": "Đăng ký thất bại",
+    "job_created": "Đã tạo job",
+    "job_updated": "Đã cập nhật job",
+    "job_deleted": "Đã xóa job",
+    "run_started": "Đã bắt đầu run",
+    "run_cancelled": "Đã hủy run",
+    "export_started": "Đang xuất dữ liệu"
+  }
+}

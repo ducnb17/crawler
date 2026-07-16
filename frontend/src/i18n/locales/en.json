@@ -1,0 +1,133 @@
+{
+  "app": {
+    "title": "Crawler Dashboard",
+    "subtitle": "Async web crawler"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "loading": "Loading...",
+    "confirm": "Confirm",
+    "search": "Search",
+    "filter": "Filter",
+    "actions": "Actions",
+    "yes": "Yes",
+    "no": "No",
+    "all": "All",
+    "created_at": "Created at",
+    "updated_at": "Updated at",
+    "next": "Next",
+    "prev": "Prev",
+    "page": "Page",
+    "of": "of",
+    "noData": "No data"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "jobs": "Jobs",
+    "results": "Results",
+    "proxies": "Proxies",
+    "webhooks": "Webhooks",
+    "users": "Users",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Sign in",
+    "signup": "Sign up",
+    "email": "Email",
+    "password": "Password",
+    "full_name": "Full name",
+    "login_desc": "Sign in to manage crawl jobs",
+    "signup_desc": "Only enabled when app is in development mode",
+    "to_signup": "No account yet? Sign up",
+    "to_login": "Already have an account? Sign in",
+    "logout_success": "Signed out"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "kpi_active_jobs": "Active jobs",
+    "kpi_items_today": "Items today",
+    "kpi_runs_24h": "Runs (24h)",
+    "kpi_success_rate": "Success rate",
+    "recent_runs": "Recent runs",
+    "items_per_day": "Items per day"
+  },
+  "jobs": {
+    "title": "Crawl Jobs",
+    "new": "New job",
+    "search": "Search by job name...",
+    "name": "Name",
+    "description": "Description",
+    "start_urls": "Start URLs",
+    "allowed_domains": "Allowed domains",
+    "selectors": "Selectors",
+    "item_container": "Item container selector",
+    "fields": "Extracted fields",
+    "next_page": "Next page selector",
+    "max_pages": "Max pages",
+    "max_depth": "Max depth",
+    "delay": "Delay (s)",
+    "render_js": "Render JS (Playwright)",
+    "robots_obey": "Obey robots.txt",
+    "concurrency": "Concurrency",
+    "schedule_cron": "Cron (schedule)",
+    "is_active": "Active",
+    "allow_concurrent_runs": "Allow concurrent runs",
+    "status": "Status",
+    "wizard": {
+      "step_target": "Target",
+      "step_selectors": "Extractors",
+      "step_schedule": "Schedule & Options",
+      "field_name": "Field name",
+      "field_selector": "Selector",
+      "field_attr": "Attribute",
+      "field_transform": "Transform",
+      "add_field": "Add field",
+      "auto_detect": "Auto-detect (AI)"
+    }
+  },
+  "runs": {
+    "title": "Runs history",
+    "pages_crawled": "Pages crawled",
+    "pages_failed": "Pages failed",
+    "items_extracted": "Items extracted",
+    "live_log": "Live log",
+    "start_run": "Start run",
+    "cancel_run": "Cancel run",
+    "triggered_by": "Triggered by",
+    "finish": "Finish",
+    "events_done": "SSE ended"
+  },
+  "results": {
+    "title": "Results",
+    "url": "URL",
+    "data": "Data",
+    "extracted_at": "Extracted at",
+    "exportCsv": "Export CSV",
+    "exportJson": "Export JSON"
+  },
+  "users": {
+    "email": "Email",
+    "scopes": "Scopes",
+    "is_active": "Active",
+    "is_superuser": "Superuser",
+    "create": "Create user",
+    "delete_warn": "Delete this user? Cannot be undone."
+  },
+  "toast": {
+    "login_success": "Signed in successfully",
+    "login_failed": "Sign in failed",
+    "signup_success": "Signed up successfully",
+    "signup_failed": "Sign up failed",
+    "job_created": "Job created",
+    "job_updated": "Job updated",
+    "job_deleted": "Job deleted",
+    "run_started": "Run started",
+    "run_cancelled": "Run cancelled",
+    "export_started": "Exporting data"
+  }
+}
