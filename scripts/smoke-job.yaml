@@ -1,0 +1,45 @@
+# Sample smoke crawl job config — chạy:
+#   python -m backend.app.worker.tasks crawl_one --job-config scripts/smoke-job.yaml
+# (sau khi đã chạy `python -m playwright install chromium`)
+#
+# Target: books.toscrape.com (sandbox chính thức cho crawler test)
+
+name: smoke-books
+start_urls:
+  - https://books.toscrape.com/catalogue/page-1.html
+allowed_domains:
+  - books.toscrape.com
+
+item_container: "article.product_pod"
+fields:
+  title:
+    selector: "h3 a"
+    attr: title
+    type: attr
+    transform: strip
+  price:
+    selector: ".price_color"
+    type: text
+    transform: price
+  availability:
+    selector: ".instock.availability"
+    type: text
+    transform: strip
+  rating:
+    selector: ".star-rating"
+    attr: class
+    type: attr
+  url:
+    selector: "h3 a"
+    attr: href
+    type: attr
+next_page: "li.next a::attr(href)"
+follow_links: false
+max_pages: 5        # số trang tối đa (mỗi trang có 20 item)
+max_depth: 1
+delay: 1.0
+render_js: false
+robots_obey: true
+concurrency: 2
+min_content_length: 200
+extra_headers: {}

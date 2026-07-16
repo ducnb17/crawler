@@ -1,9 +1,0 @@
-start_urls:
-- https://webscraper.io/test-sites/e-commerce/allinone
-allowed_domains:
-- webscraper.io
-title_selector: title::text
-content_selector: .thumbnail
-delay: 1
-user_agent: 'crawler-bot/1.0 (+https://github.com/your-org/crawler; contact: your-email@example.com)'
-max_pages: 2

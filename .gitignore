@@ -1,23 +1,89 @@
-# Output data (không commit dữ liệu crawl được)
-output.jsonl
-crawled_data.db
-*.jsonl
-*.db
-crawl_log.txt
-
-# Log
-crawler.log
-*.log
-
-# Scrapy cache
-httpcache/
-
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+build/
+dist/
+.installed.cfg
+*.egg
+
+# Virtual envs
 .venv/
 venv/
 venv_wsl/
+env/
+ENV/
+.python-version
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+coverage.xml
+m_cache/
+
+# Linters / type checkers
+.ruff_cache/
+.mypy_cache/
+.pyre/
+.pytype/
+.dmypy.json
+
+# Frontend
+node_modules/
+dist/
+.vite/
+*.local
+.env.local
+.env.*.local
+pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Playwright
 .playwright/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Runtime artifacts
+*.log
+*.db
+*.db-journal
+*.sqlite
+*.sqlite-journal
+*.jsonl
+output.json
+output.csv
+crawl_log.txt
+crawler.log
+exports/
+uploads/
+httpcache/
+
+# Helm
+infra/helm/**/charts/
+infra/helm/**/Chart.lock.cline/
+.clinerules1

@@ -1,0 +1,169 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "crawler-backend"
+version = "0.1.0"
+description = "Async web crawler system: FastAPI + Celery + Playwright"
+readme = "../README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "Crawler Team" }]
+
+dependencies = [
+    # API / server
+    "fastapi>=0.115,<0.120",
+    "uvicorn[standard]>=0.34",
+    "gunicorn>=22",
+    "sse-starlette>=2.1",
+    "prometheus-fastapi-instrumentator>=7",
+    # Config
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "python-multipart>=0.0.12",
+    # DB
+    "sqlalchemy[asyncio]>=2.0.36",
+    "asyncpg>=0.30",
+    "alembic>=1.14",
+    # Cache / queue
+    "redis>=5.2",
+    "celery[redis]>=5.4",
+    # Crawler engine
+    "httpx[http2]>=0.28",
+    "playwright>=1.49",
+    "selectolax>=0.3.27",
+    "cloudscraper>=1.2.71",
+    "fake-useragent>=1.5.1",
+    "robotexclusionrulesparser>=1.4",
+    "xxhash>=3.5",
+    # Auth
+    "passlib[argon2]>=1.7.4",
+    "python-jose[cryptography]>=3.3",
+    "bcrypt>=4.2",  # for passlib backend
+    # Webhook / util
+    "httpx-retries>=0.1",  # not strictly needed (we implement our own), kept optional
+    "tenacity>=9",  # retry helpers (used for webhook deliveries)
+    # Logging / obs
+    "structlog>=24.4",
+    "sentry-sdk[fastapi]>=2.19",
+    # LLM (auto-detect, optional)
+    "openai>=1.59",
+    # Export
+    "openpyxl>=3.1",
+    # Misc
+    "python-dateutil>=2.9",
+    "croniter>=5.0",  # schedule parsing
+    "orjson>=3.10",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.8",
+    "mypy>=1.13",
+    "types-python-jose",
+    "types-passlib",
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "pytest-cov>=6",
+    "anyio>=4.7",
+    "respx>=0.21",  # httpx mocking
+    "freezegun>=1.5",
+    "httpx-sse>=0.4",
+    "pytest-mock>=3.14",
+]
+
+[project.scripts]
+crawler-cli = "app.worker.tasks:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["app/migrations/versions"]
+
+[tool.ruff.lint]
+select = [
+    "E", "F", "W", "I", "B", "C4", "UP", "N", "RET", "SIM",
+    "ASYNC", "A", "S", "T20", "PL", "RUF",
+]
+ignore = [
+    "S101",   # assert in tests
+    "S104",   # bind all interfaces in dev
+    "S603",   # subprocess checked
+    "S607",   # partial path ok in dev
+    "S311",   # random module ok cho jitter/delay (không phải crypto)
+    "PLR0913", # many args ok for services
+    "PLR0911", # many returns ok trong helpers
+    "PLR2004", # magic values ok trong parser fetcher
+    "PLC0415", # imports-in-function là cố ý (lazy load heavy libs)
+    "PLW0603", # global statement cho module-level singletons
+    "T201",   # print used for CLI smoke
+    "B008",   # Depends() default ok in FastAPI
+    "S112",   # try-except-continue trong parse loop ok với log
+    "S105",   # password scheme name không phải secret
+    "PLW0602", # global read-only cho reset singletons
+    "RUF001", "RUF002", "RUF003", # smart quotes trong vi strings
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S", "PLR2004", "T201", "PLC0415", "E501", "PLW0603"]
+"app/migrations/**" = ["E", "F", "W", "N"]
+"app/migrations/versions/**" = ["E501", "PLW0603"]
+"app/crawler/user_agents.py" = ["E501"]  # UA strings cố ý dài
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+exclude = ["app/migrations/versions", "tests/"]
+ignore_missing_imports = true
+# Celery decorators chưa có py.typed; bỏ qua warning untyped-decorator
+disallow_untyped_decorators = false
+# Một số fields sử dụng Any từ external libs bên ngoài override
+warn_unused_ignores = false
+
+[[tool.mypy.overrides]]
+module = [
+    "cloudscraper",
+    "cloudscraper.*",
+    "robotexclusionrulesparser",
+    "robotexclusionrulesparser.*",
+    "selectolax",
+    "selectolax.*",
+    "fake_useragent",
+    "fake_useragent.*",
+    "celery",
+    "celery.*",
+    "playwright",
+    "playwright.*",
+    "prometheus_fastapi_instrumentator",
+    "prometheus_fastapi_instrumentator.*",
+    "croniter",
+    "croniter.*",
+    "sse_starlette",
+    "sse_starlette.*",
+    "passlib",
+    "passlib.*",
+    "jose",
+    "jose.*",
+    "respx",
+    "respx.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --strict-config"
+markers = [
+    "integration: requires live Postgres/Redis (skipped by default)",
+    "browser: requires Playwright browser installed",
+]
+filterwarnings = ["error::DeprecationWarning:app.*"]

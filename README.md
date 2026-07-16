@@ -1,107 +1,203 @@
-# Crawler
+# Crawler — Async Web Crawler System
 
-Scrapy spider tổng quát (`GenericSpider`), tự fallback sang Playwright khi
-trang cần render JavaScript. Toàn bộ cấu hình nằm trong `config.yaml`,
-không cần sửa code khi đổi mục tiêu crawl.
+Production-grade async web crawler: quản lý nhiều **crawl jobs** qua REST +
+realtime SSE, chạy trên pool worker (Celery + Redis), lưu kết quả vào
+PostgreSQL. Hỗ trợ Playwright (サイト JS), Cloudflare bypass, proxy rotation,
+webhook notification, schema auto-detect (AI), và dashboard Vue 3 đẹp mắt.
 
-## Cấu hình (`config.yaml`)
+> **Đang trong giai đoạn rewrite theo milestone M1–M7.**
+> Code Scrapy cũ đã sao lưu sang branch `legacy/old-scrapy`. M1 = scaffold +
+> engine core. M2 = API + auth. M3 = frontend. M4 = advanced features.
 
-```yaml
-start_urls:
-  - "https://quotes.toscrape.com/js/"
+## Stack
 
-allowed_domains:
-  - "quotes.toscrape.com"
+| Lớp | Công nghệ |
+|---|---|
+| Crawler engine | Python 3.12+, asyncio, httpx (HTTP/2), Playwright async fallback |
+| Backend API | FastAPI + Pydantic v2 |
+| Task queue | Celery + Redis (Redis cho frontier queue + dedup + locks + pubsub) |
+| DB | PostgreSQL 16 (SQLAlchemy 2.0 async + Alembic), `pg_trgm` cho full-text |
+| Auth | JWT RS256 + refresh token + RBAC scopes (M2) |
+| Frontend | Vue 3 + Vite + TS + TailwindCSS + shadcn-vue + ECharts (M3) |
+| Realtime | Server-Sent Events (SSE) cho crawl progress |
+| Webhooks | Discord / Telegram / Slack / Email / HTTP generic + HMAC-SHA256 (M4) |
+| Auto-detect | Heuristic + OpenAI gpt-4o-mini (off mặc định, M5) |
+| Deploy | Docker multi-stage + docker-compose dev + Helm chart (M6) |
 
-title_selector: "title::text"
-content_selector: ".quote"
+## Kiến trúc (M1)
 
-delay: 1          # giây, độ trễ giữa các request (DOWNLOAD_DELAY)
-user_agent: "crawler-bot/1.0 (+https://github.com/your-org/crawler; contact: your-email@example.com)"
-max_pages: 50      # số item tối đa crawl trong 1 lần chạy, 0 = không giới hạn
+```
+backend/
+├─ app/
+│  ├─ main.py                  # FastAPI app (M1: /health /ready /metrics)
+│  ├─ config.py                # pydantic-settings (env)
+│  ├─ core/{db,redis,logging,security}.py
+│  ├─ models/                  # SQLAlchemy ORM (jobs/users/results/proxies/webhooks)
+│  ├─ schemas/                 # Pydantic request/response (M2+)
+│  ├─ api/                     # REST endpoints (M2+)
+│  ├─ services/                # business logic (M2+)
+│  ├─ crawler/                 # ← THE NEW ENGINE
+│  │  ├─ engine.py              #   orchestrator (frontier, semaphore, fetcher→extractor→DB flush)
+│  │  ├─ fetcher.py             #   httpx + cloudscraper (CF) + Playwright fallback
+│  │  ├─ browser_pool.py       #   shared Playwright browser/context pool
+│  │  ├─ parser.py              #   HTML parse, CSS attr extract, regex, JSON-LD
+│  │  ├─ extractor.py          #   per-job field extraction → dict rows
+│  │  ├─ dedup.py               #   Redis SET url dedup
+│  │  ├─ robots.py              #   robots.txt enforcement + cache
+│  │  ├─ user_agents.py        #   SINGLE source of UA rotation + headers
+│  │  ├─ antibot.py            #   Cloudflare detection
+│  │  └─ middleware.py        #   pluggable request/response hooks
+│  ├─ worker/
+│  │  ├─ celery_app.py          #   Celery config + beat schedule
+│  │  ├─ tasks.py               #   crawl_task, schedule_tick, send_webhook, export_task + CLI `crawl_one`
+│  │  └─ beat.py
+│  ├─ detect/                  # heuristic + LLM schema auto-detect (M5)
+│  ├─ migrations/              # Alembic
+│  └─ ...
+├─ pyproject.toml
+├─ alembic.ini
+└─ tests/
+
+infra/
+├─ docker-compose.dev.yml      # postgres + redis
+└─ postgres-init/01_extensions.sql
+
+scripts/smoke-job.yaml          # config cho CLI smoke test (books.toscrape.com)
+
+frontend/                       # Vue 3 SPA (M3)
 ```
 
-Để crawl trang khác, chỉ cần sửa các trường trên:
+## Quickstart (M1: dev)
 
-- `start_urls`: danh sách URL bắt đầu crawl.
-- `allowed_domains`: domain được phép crawl (chống crawl lan sang site khác).
-- `title_selector` / `content_selector`: CSS selector để lấy tiêu đề/nội dung.
-- `delay`: tăng nếu site nhạy với tốc độ request, giảm nếu cần crawl nhanh hơn.
-- `user_agent`: nên để lại thông tin liên hệ thật để chủ site có thể phản hồi.
-- `max_pages`: giới hạn số item để tránh crawl quá nhiều ngoài ý muốn.
+### Yêu cầu
+- Python 3.12+
+- Docker (chạy postgres 16 + redis 7)
+- Node 20+ / pnpm (chỉ khi tới M3)
 
-Biến môi trường `CRAWLER_USER_AGENT`, `CRAWLER_DOWNLOAD_DELAY`,
-`CRAWLER_MAX_PAGES` (và các biến `CRAWLER_*` khác trong `settings.py`) sẽ
-override giá trị trong `config.yaml` nếu được set — hữu ích khi deploy/CI.
-
-## Cài đặt
+### Cài đặt
 
 ```bash
-pip install -r requirements.txt
-python -m playwright install chromium
+# 1. Tạo venv + cài deps backend
+make install-be            # hoặc: python -m venv .venv && pip install -e 'backend[dev]'
+
+# 2. Cài Playwright browser
+make install-browsers     # ~150MB Chromium
+
+# 3. Sao chép env
+cp .env.example .env
+
+# 4. Khởi động postgres + redis
+make up                   # docker compose -f infra/docker-compose.dev.yml up -d
+
+# 5. Áp dụng alembic migration để tạo schema
+make migrate
 ```
 
-## Chạy crawl
-
-Chạy từ thư mục gốc project (chứa `scrapy.cfg`):
+### Chạy
 
 ```bash
-python -m scrapy crawl generic_spider
+# Backend API (FastAPI dev)
+make dev-api              # uvicorn --reload :8001
+
+# Celery worker (cần nếu dùng crawl_task qua queue)
+make dev-worker
+
+# Celery beat (mấy scheduler, M4+cần)
+make dev-beat
+
+# Smoke-test engine (chạy 1 crawl trực tiếp, không cần DB):
+make test-engine          # → chạy scripts/smoke-job.yaml
 ```
 
-Kết quả được lưu vào:
+Mở `http://localhost:8001/docs` để xem OpenAPI.
 
-- `crawler/output.jsonl`: mỗi dòng là 1 item JSON, ghi tiếp qua các lần chạy.
-- `crawler/crawled_data.db`: SQLite, bảng `items`, dùng để dedup theo `url`
-  (item có URL đã crawl trước đó sẽ bị bỏ qua, không lưu trùng).
-
-## Anti-bot (rotate User-Agent, delay, Cloudflare bypass)
-
-Cả 2 nhánh crawl (Scrapy và `core/fetcher.py`) dùng chung
-`crawler/core/antibot.py`:
-
-- **Rotate User-Agent**: mỗi request được gán 1 UA ngẫu nhiên
-  (`fake_useragent`, có fallback list tĩnh nếu không tải được data online).
-  Với Scrapy, xử lý qua `RandomUserAgentMiddleware` trong `middlewares.py`.
-- **Random delay**: `AUTOTHROTTLE_ENABLED` + `RANDOMIZE_DOWNLOAD_DELAY` cho
-  Scrapy; `core/fetcher.py` dùng `min_delay`/`max_delay` trong `config.yaml`
-  để random sleep giữa các request.
-- **Bypass Cloudflare 5s challenge**: khi response trả về 403/503 kèm dấu
-  hiệu challenge (`cf-chl`, `Just a moment...`...), request được tự động
-  retry qua `cloudscraper` (`CloudscraperMiddleware` cho Scrapy, hàm `fetch()`
-  cho `core/fetcher.py`).
-
-## Requests + BeautifulSoup cho trang đơn giản (`core/fetcher.py`)
-
-Khi không cần crawl quy mô lớn/phân trang phức tạp, dùng script nhẹ này
-(đọc cùng `config.yaml`, lưu qua cùng `core/storage.py`):
+### Tests / lint / type-check
 
 ```bash
-python -m crawler.core.fetcher
+make test                 # pytest
+make lint                 # ruff check
+make fmt                  # ruff format + fix
+make typecheck            # mypy
 ```
 
-Xuất CSV từ SQLite (dùng cho cả 2 nhánh crawl):
+Trạng thái build hiện tại: [ruff ✅, mypy ✅, pytest ✅ (19 tests)].
+
+## Cấu hình 1 crawl job
+
+Mỗi job = 1 row trong bảng `jobs` (sẽ CRUD qua UI ở M3). Field `fields` là JSON
+map tên field → spec:
+
+```jsonc
+{
+  "name": "books",
+  "start_urls": ["https://books.toscrape.com/catalogue/page-1.html"],
+  "allowed_domains": ["books.toscrape.com"],
+  "item_container": "article.product_pod",
+  "fields": {
+    "title":       { "selector": "h3 a",   "attr": "title"  },
+    "price":       { "selector": ".price_color", "transform": "price" },
+    "availability":{ "selector": ".instock.availability", "transform": "strip" },
+    "rating":      { "selector": ".star-rating", "attr": "class" },
+    "url":         { "selector": "h3 a",   "attr": "href"   }
+  },
+  "next_page": "li.next a::attr(href)",
+  "max_pages": 5,
+  "max_depth": 1,
+  "delay": 1.0,
+  "render_js": false,
+  "robots_obey": true,
+  "concurrency": 2
+}
+```
+
+Hỗ trợ selector: CSS (`h3 a`), CSS + attr (`h3 a::attr(href)`), regex post-process,
+transform (`strip|lower|upper|int|float|price`), JSON-LD/schema.org fallback.
+
+## Anti-bot & fetch order
+
+1. `httpx.AsyncClient` (random UA + headers thật browser, retry/backoff cho
+   408/429/500/502/503/504/520/522/524).
+2. Cloudflare challenge (403/503 + `cf-mitigated` hoặc body markers) →
+   `cloudscraper` fallback (sync lib chạy trong `asyncio.to_thread`).
+3. Content thiếu (`< min_content_length`) hoặc job `render_js=True` →
+   Playwright render (browser context pool chia sẻ, anti-detection stealth).
+
+## Crawl execution flow
+
+```
+POST /jobs/{id}/run (M2)  ──▶ Celery crawl_task ──▶ CrawlerEngine.run()
+   ↓                                                   │
+DB: tạo job_runs row                          frontier queue (Redis List)
+   ↓                                                   │
+SSE /runs/{id}/events ◀── Redis pubsub ◀──── worker_pool (asyncio.Semaphore)
+   ↓                                                   │
+DB: results rows ghi batch (ON CONFLICT update)        │
+                                                       ↓
+                                              fetcher → extractor → _do_flush()
+```
+
+## Roadmap (M1–M7)
+
+| Milestone | Nội dung | Status |
+|---|---|---|
+| M1 | Scaffold + core engine + workers + DB schema + CLI smoke | ✅ done |
+| M2 | API đầy đủ: auth (JWT+RBAC), jobs CRUD, runs (start/stop), SSE, results list + export CSV/JSON | ⏳ next |
+| M3 | Frontend Vue 3: login, jobs list + new job wizard (auto-detect), results table, SSE log viewer, dark mode | ⏳ |
+| M4 | Proxy pool + health, webhook deliveries + test-send, schedule/beat, Excel export, FTS (pg_trgm) | ⏳ |
+| M5 | AI schema auto-detect (heuristic + OpenAI), UI auto-detect button + preview | ⏳ |
+| M6 | Prod hardening: Prometheus metrics, Sentry, structlog, Helm chart, HPA, CI/CD | ⏳ |
+| M7 | Migration dữ liệu SQLite→Postgres, cleanup, finalize docs | ⏳ |
+
+## Backup code cũ
+
+Code Scrapy/Playwright cũ đã commit cuối nhánh branch `legacy/old-scrapy`:
 
 ```bash
-python -c "from crawler.core.storage import export_csv; print(export_csv())"
+git checkout legacy/old-scrapy   # xem/xem chạy thử bản trước rewrite
+git checkout main                # quay lại bản mới
 ```
 
-## Fallback Playwright
+## Đóng góp
 
-
-Nếu HTML tĩnh trả về thiếu nội dung (không tìm thấy `content_selector`, hoặc
-text quá ngắn), spider tự động gửi lại request qua `scrapy-playwright` để
-render JavaScript rồi extract lại. Việc này diễn ra tự động, không cần cấu
-hình thêm.
-
-## Error handling & log
-
-- Request lỗi tạm thời (500/502/503/504/522/524/408/429 hoặc timeout) sẽ tự
-  retry tối đa `RETRY_TIMES` lần (mặc định 3), override qua `CRAWLER_RETRY_TIMES`.
-- `DOWNLOAD_TIMEOUT` (mặc định 30s) chỉnh qua `CRAWLER_DOWNLOAD_TIMEOUT`.
-- Log ghi ra file `crawler/crawler.log` (không chỉ console), đường dẫn/level
-  chỉnh qua `CRAWLER_LOG_FILE` / `CRAWLER_LOG_LEVEL`.
-- Nếu thấy site chặn/trả 429 liên tục: tăng `delay` trong `config.yaml` hoặc
-  giảm `CONCURRENT_REQUESTS_PER_DOMAIN` trong `settings.py`.
-
-
+Xem `CLAUDE.md` cho convention (snake_case, comment tiếng Anh, user-facing tiếng
+Việt, mọi HTTP phải try-catch + log).
