@@ -7,7 +7,8 @@ webhook notification, schema auto-detect (AI), và dashboard Vue 3 đẹp mắt.
 
 > **Đang trong giai đoạn rewrite theo milestone M1–M7.**
 > Code Scrapy cũ đã sao lưu sang branch `legacy/old-scrapy`. M1 = scaffold +
-> engine core. M2 = API + auth. M3 = frontend. M4 = advanced features.
+> engine core. **M2 = API + auth (JWT/RS256 + RBAC + refresh) + jobs CRUD +
+> runs + SSE + results/export.** M3 = frontend. M4 = advanced features.
 
 ## Stack
 
@@ -162,6 +163,52 @@ transform (`strip|lower|upper|int|float|price`), JSON-LD/schema.org fallback.
 3. Content thiếu (`< min_content_length`) hoặc job `render_js=True` →
    Playwright render (browser context pool chia sẻ, anti-detection stealth).
 
+## API (M2) — REST + SSE
+
+Tự generate RSA keypair trước khi chạy:
+
+```bash
+python -m scripts.gen_jwt_keys --out backend/secrets
+# update .env: AUTH_PRIVATE_KEY_PATH / AUTH_PUBLIC_KEY_PATH
+```
+
+**Auth flow** (JWT RS256 + refresh tokens):
+
+- `POST /auth/signup` — chỉ mở khi `APP_ENV=development` (đăng ký công khai).
+  User đầu tiên tự trở thành `superuser` (scope `*`).
+- `POST /auth/login` — `{email, password}` → `{access_token, refresh_token}`.
+- `POST /auth/refresh` — `{refresh_token}` → rotate, trả token pair mới.
+- `POST /auth/logout` — revoke 1 refresh token.
+- `GET /auth/me` — thông tin user hiện tại.
+
+**RBAC scopes** (`app/core/security.py`): `jobs:read|write|delete|run`,
+`results:read|export|delete`, `proxies:*`, `webhooks:*`, `users:*`. Superuser
+(`*`) bypass scope check. Sau khi đăng nhập, `Authorization: Bearer <token>`
+phải được gửi; scope phải có ở cả token claims và `users.scopes` trong DB.
+
+**Jobs CRUD** (`/jobs`):
+- `GET /jobs?q=&status=&page=&size=` — list có phân trang (owner-scoped).
+- `POST /jobs` — tạo. `schedule_cron` (nếu có) tự tính `next_run_at`.
+- `GET /jobs/{id}` · `PATCH /jobs/{id}` · `DELETE /jobs/{id}`.
+
+**Runs** (`/runs` + `/jobs/{id}/runs`):
+- `POST /jobs/{job_id}/runs` — enqueue `crawl_task` (Celery) tạo row `job_runs`
+  status `pending`. Block nếu đã có run running (`allow_concurrent_runs=False`).
+- `GET /runs/{run_id}` — status, stats, error.
+- `POST /runs/{run_id}/cancel` — mark cancelled (best-effort).
+- `GET /runs/{run_id}/events` — **SSE stream**: events `start`, `page_done`,
+  `page_failed`, `progress`, `done`, `error` + heartbeat `ping` mỗi 15s.
+
+**Results** (`/results`):
+- `GET /results?job_id=&run_id=&q=&url_contains=&page=&size=&sort=field:dir`
+  — pg_trgm gin index cho full-text search URL + data::text.
+- `GET /results/export.csv?columns=title,price` — auto-detect columns nếu không
+  truyền.
+- `GET /results/export.json` — JSON array.
+
+**Users** (admin only): `GET /users`, `GET /users/{id}`, `POST /users`,
+`PATCH /users/{id}`, `DELETE /users/{id}`.
+
 ## Crawl execution flow
 
 ```
@@ -181,7 +228,7 @@ DB: results rows ghi batch (ON CONFLICT update)        │
 | Milestone | Nội dung | Status |
 |---|---|---|
 | M1 | Scaffold + core engine + workers + DB schema + CLI smoke | ✅ done |
-| M2 | API đầy đủ: auth (JWT+RBAC), jobs CRUD, runs (start/stop), SSE, results list + export CSV/JSON | ⏳ next |
+| M2 | API đầy đủ: auth (JWT+RBAC), jobs CRUD, runs (start/stop), SSE, results list + export CSV/JSON | ✅ done |
 | M3 | Frontend Vue 3: login, jobs list + new job wizard (auto-detect), results table, SSE log viewer, dark mode | ⏳ |
 | M4 | Proxy pool + health, webhook deliveries + test-send, schedule/beat, Excel export, FTS (pg_trgm) | ⏳ |
 | M5 | AI schema auto-detect (heuristic + OpenAI), UI auto-detect button + preview | ⏳ |
