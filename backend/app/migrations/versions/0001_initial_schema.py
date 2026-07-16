@@ -30,7 +30,7 @@ def upgrade() -> None:
         sa.Column("full_name", sa.String(255)),
         sa.Column("is_active", sa.Boolean, nullable=False, server_default=sa.text("true")),
         sa.Column("is_superuser", sa.Boolean, nullable=False, server_default=sa.text("false")),
-        sa.Column("scopes", postgresql.JSON, nullable=False, server_default=sa.text("[]")),
+        sa.Column("scopes", postgresql.JSON, nullable=False, server_default=sa.text("'[]'::json")),
         sa.Column("oauth_provider", sa.String(50)),
         sa.Column("oauth_id", sa.String(255)),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()),
